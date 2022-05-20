@@ -38,7 +38,7 @@ public class SimpleValueExtractorTransform {
 
     @Override
     public String apply(JsonNode input) {
-      return input.get("id").toString();
+      return input.get("id").toString().replaceAll("^\"|\"$", "");
     }
 
     /** Builder for {@link SimpleValueExtractorFn}. */

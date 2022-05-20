@@ -1452,7 +1452,7 @@ public class ElasticsearchIO {
                     "{ \"update\" : %s }%n{ \"doc\" : %s, \"doc_as_upsert\" : true }%n",
                     documentMetadata, document));
           } else {
-            batch.add(String.format("{ \"create\" : %s }%n%s%n", documentMetadata, document));
+            batch.add(String.format("{ \"index\" : %s }%n%s%n", documentMetadata, document));
           }
         }
 
