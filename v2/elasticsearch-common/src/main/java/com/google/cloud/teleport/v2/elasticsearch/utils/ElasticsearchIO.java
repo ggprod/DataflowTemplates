@@ -1441,6 +1441,11 @@ public class ElasticsearchIO {
           }
         }
 
+        long newBatchSizeBytes = currentBatchSizeBytes + document.getBytes(StandardCharsets.UTF_8).length;
+        if (newBatchSizeBytes > spec.getMaxBatchSizeBytes()) {
+          flushBatch();
+        }
+
         if (isDelete) {
           // delete request used for deleting a document.
           batch.add(String.format("{ \"delete\" : %s }%n", documentMetadata));
