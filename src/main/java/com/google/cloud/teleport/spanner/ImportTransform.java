@@ -19,12 +19,12 @@ import com.google.api.gax.longrunning.OperationFuture;
 import com.google.cloud.spanner.DatabaseAdminClient;
 import com.google.cloud.spanner.Dialect;
 import com.google.cloud.spanner.Mutation;
-import com.google.cloud.teleport.spanner.ExportProtos.Export;
-import com.google.cloud.teleport.spanner.ExportProtos.ProtoDialect;
-import com.google.cloud.teleport.spanner.ExportProtos.TableManifest;
 import com.google.cloud.teleport.spanner.ddl.ChangeStream;
 import com.google.cloud.teleport.spanner.ddl.Ddl;
 import com.google.cloud.teleport.spanner.ddl.Table;
+import com.google.cloud.teleport.spanner.proto.ExportProtos.Export;
+import com.google.cloud.teleport.spanner.proto.ExportProtos.ProtoDialect;
+import com.google.cloud.teleport.spanner.proto.ExportProtos.TableManifest;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.base.Verify;
@@ -285,12 +285,13 @@ public class ImportTransform extends PTransform<PBegin, PDone> {
   }
 
   /** Read contents of the top-level manifest file. */
-  private static class ReadExportManifestFile extends PTransform<PBegin, PCollection<Export>> {
+  @VisibleForTesting
+  static class ReadExportManifestFile extends PTransform<PBegin, PCollection<Export>> {
 
     private final ValueProvider<String> importDirectory;
     private final PCollectionView<Dialect> dialectView;
 
-    private ReadExportManifestFile(
+    ReadExportManifestFile(
         ValueProvider<String> importDirectory, PCollectionView<Dialect> dialectView) {
       this.importDirectory = importDirectory;
       this.dialectView = dialectView;
@@ -347,12 +348,13 @@ public class ImportTransform extends PTransform<PBegin, PDone> {
     }
   }
 
-  private static class ReadTableManifestFile
+  @VisibleForTesting
+  static class ReadTableManifestFile
       extends PTransform<PCollection<KV<String, String>>, PCollection<KV<String, TableManifest>>> {
 
     private final ValueProvider<String> importDirectory;
 
-    private ReadTableManifestFile(ValueProvider<String> importDirectory) {
+    ReadTableManifestFile(ValueProvider<String> importDirectory) {
       this.importDirectory = importDirectory;
     }
 
@@ -591,7 +593,8 @@ public class ImportTransform extends PTransform<PBegin, PDone> {
     }
   }
 
-  private static class ReadAvroSchemas extends DoFn<KV<String, String>, KV<String, String>> {
+  @VisibleForTesting
+  static class ReadAvroSchemas extends DoFn<KV<String, String>, KV<String, String>> {
 
     @ProcessElement
     public void processElement(ProcessContext c) {
